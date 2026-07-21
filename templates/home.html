@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}MoonBite (MBITE) — Fair-launch crypto you can mine &amp; hold{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='home-cinematic.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Lunar scroll-progress meter -->
+<div class="cine-progress" aria-hidden="true"><span><i class="cine-progress-moon"></i></span></div>
+
+<!-- ========================================================= CINEMATIC HERO -->
+<section class="cine-hero">
+    <canvas id="cineStars" class="cine-starfield" aria-hidden="true"></canvas>
+
+    <!-- Floating live-network pods (mirror the hidden ticker values) -->
+    <div class="cine-pods" aria-hidden="true">
+        <div class="cine-pod p1 float"><div class="cine-pod-value" id="cinePodHeight">—</div><div class="cine-pod-label">Block Height</div></div>
+        <div class="cine-pod p2 float"><div class="cine-pod-value" id="cinePodSupply">—</div><div class="cine-pod-label">MBITE Mined</div></div>
+        <div class="cine-pod p3 float"><div class="cine-pod-value" id="cinePodTx">—</div><div class="cine-pod-label">Transactions</div></div>
+        <div class="cine-pod p4 float"><div class="cine-pod-value" id="cinePodMempool">—</div><div class="cine-pod-label">Mempool</div></div>
+    </div>
+
+    <div class="cine-scene">
+        <!-- The moon + orbiting coin -->
+        <div class="cine-orbit-wrap">
+            <div class="cine-moon-halo"></div>
+            <div class="cine-orbit-ring"></div>
+            <div class="cine-orbit-ring two"></div>
+            <div class="cine-moon"></div>
+            <div class="cine-orbiter"><div class="cine-coin">🌙</div></div>
+        </div>
+
+        <div class="cine-copy">
+            <span class="cine-chip"><span class="cine-ping"></span> Pre-mainnet · Live testnet · MBITE</span>
+            <h1 class="cine-title">Money for the <span class="cine-shine">next orbit.</span></h1>
+            <p class="cine-sub">
+                MoonBite is an open, fair-launch cryptocurrency you can mine on your own hardware,
+                hold in a self-custody wallet, and verify with your own node. No premine. No gatekeepers.
+                Just proof-of-work money, built in the open.
+            </p>
+            <div class="cine-cta">
+                <a href="/get-wallet" class="cine-btn primary">Get the Wallet →</a>
+                <a href="/mine" class="cine-btn ghost">⛏️ Start Mining</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="cine-scrollcue" aria-hidden="true">
+        <div class="cine-mouse"></div>
+        <span>Scroll</span>
+    </div>
+</section>
+
+<!-- ======================================================== FEATURE MARQUEE -->
+<div class="cine-marquee" aria-hidden="true">
+    <div class="cine-marquee-track">
+        <span><span class="dot"></span> <b>No premine</b> — fair launch</span>
+        <span><span class="dot"></span> <b>13,999,999.909</b> max supply</span>
+        <span><span class="dot"></span> <b>Self-custody</b> wallet</span>
+        <span><span class="dot"></span> <b>2.5-min</b> blocks</span>
+        <span><span class="dot"></span> <b>Halving</b> every 700k blocks</span>
+        <span><span class="dot"></span> <b>CPU-friendly</b> proof-of-work</span>
+        <span><span class="dot"></span> <b>Open</b> REST API</span>
+        <span><span class="dot"></span> <b>Run your own</b> node</span>
+        <!-- duplicated for a seamless loop -->
+        <span><span class="dot"></span> <b>No premine</b> — fair launch</span>
+        <span><span class="dot"></span> <b>13,999,999.909</b> max supply</span>
+        <span><span class="dot"></span> <b>Self-custody</b> wallet</span>
+        <span><span class="dot"></span> <b>2.5-min</b> blocks</span>
+        <span><span class="dot"></span> <b>Halving</b> every 700k blocks</span>
+        <span><span class="dot"></span> <b>CPU-friendly</b> proof-of-work</span>
+        <span><span class="dot"></span> <b>Open</b> REST API</span>
+        <span><span class="dot"></span> <b>Run your own</b> node</span>
+    </div>
+</div>
+
+<!-- ================================================== LIVE NETWORK BAND -->
+<section class="mb-section-tight">
+    <div class="mb-container">
+        <div class="mb-statband" data-mb-ticker>
+            <div class="mb-stat"><div class="mb-stat-value" id="mbStatHeight">—</div><div class="mb-stat-label">Block Height</div></div>
+            <div class="mb-stat"><div class="mb-stat-value" id="mbStatSupply">—</div><div class="mb-stat-label">MBITE Mined</div></div>
+            <div class="mb-stat"><div class="mb-stat-value" id="mbStatTx">—</div><div class="mb-stat-label">Transactions</div></div>
+            <div class="mb-stat"><div class="mb-stat-value" id="mbStatMempool">—</div><div class="mb-stat-label">Mempool</div></div>
+        </div>
+        <div class="mb-statband-foot">Live from the MoonBite network · <a href="/dashboard" class="link">open the full dashboard →</a></div>
+    </div>
+</section>
+
+<!-- =================================================== GET MOONBITE -->
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head cine-reveal">
+            <span class="mb-eyebrow">Get MBITE</span>
+            <h2 class="mb-section-title">Two honest ways to get MoonBite</h2>
+            <p class="mb-section-sub">You can't buy MBITE yet — it isn't listed on any exchange. Today, the real way to get it is to mine it. Exchange listings are on the roadmap.</p>
+        </div>
+        <div class="mb-grid mb-grid-2">
+            <div class="mb-card mb-hoverable cine-reveal">
+                <div class="mb-card-icon">⛏️</div>
+                <h3 class="mb-card-title">Mine it now</h3>
+                <p class="mb-card-text">Point a miner at the network and earn the block reward directly. Available today on testnet &amp; regtest.</p>
+                <a href="/mine" class="mb-card-link">How to mine →</a>
+            </div>
+            <div class="mb-card mb-hoverable cine-reveal">
+                <div class="mb-card-icon">🏦</div>
+                <h3 class="mb-card-title">Buy on an exchange</h3>
+                <p class="mb-card-text">Coming soon. MBITE is not trading yet — get notified the moment a listing goes live.</p>
+                <a href="/markets" class="mb-card-link">See markets →</a>
+            </div>
+        </div>
+        <div style="margin-top: var(--spacing-xl);">
+            {% include "partials/notify_form.html" %}
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================== PRODUCTS -->
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-section-head cine-reveal">
+            <span class="mb-eyebrow">The toolkit</span>
+            <h2 class="mb-section-title">Everything you need to run MoonBite</h2>
+            <p class="mb-section-sub">One coin, four first-party tools. All open, all yours to run.</p>
+        </div>
+        <div class="mb-grid mb-grid-3">
+            <a href="/get-wallet" class="mb-card cine-reveal">
+                <div class="mb-card-icon">👛</div>
+                <h3 class="mb-card-title">Wallet</h3>
+                <p class="mb-card-text">Self-custody desktop wallet plus an in-browser web wallet. Your keys, your coins.</p>
+                <span class="mb-card-link">Get the wallet →</span>
+            </a>
+            <a href="/mine" class="mb-card cine-reveal">
+                <div class="mb-card-icon">⛏️</div>
+                <h3 class="mb-card-title">Miner</h3>
+                <p class="mb-card-text">Standalone miners for Windows, macOS and Linux — or watch the live reactor mine in your browser.</p>
+                <span class="mb-card-link">Start mining →</span>
+            </a>
+            <a href="/explorer" class="mb-card cine-reveal">
+                <div class="mb-card-icon">🔍</div>
+                <h3 class="mb-card-title">Explorer</h3>
+                <p class="mb-card-text">Search blocks, transactions and addresses. Verify the chain for yourself in real time.</p>
+                <span class="mb-card-link">Open explorer →</span>
+            </a>
+            <a href="/developers#run-a-node" class="mb-card cine-reveal">
+                <div class="mb-card-icon">🖧</div>
+                <h3 class="mb-card-title">Node</h3>
+                <p class="mb-card-text">Run a full node to enforce the rules yourself and help secure the network.</p>
+                <span class="mb-card-link">Run a node →</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================== WHY MOONBITE -->
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head cine-reveal">
+            <span class="mb-eyebrow">Why MoonBite</span>
+            <h2 class="mb-section-title">Fair by design</h2>
+        </div>
+        <div class="mb-grid mb-grid-3">
+            <div class="mb-feature cine-reveal">
+                <div class="mb-feature-icon">⚖️</div>
+                <h3>No premine, fair launch</h3>
+                <p>Every MBITE is mined in the open under one published emission schedule. No insider allocation, no hidden head-start.</p>
+            </div>
+            <div class="mb-feature cine-reveal">
+                <div class="mb-feature-icon">🔐</div>
+                <h3>Self-custody first</h3>
+                <p>Non-custodial by default. We never hold your keys — and the site never asks you for a seed phrase or private key.</p>
+            </div>
+            <div class="mb-feature cine-reveal">
+                <div class="mb-feature-icon">🧾</div>
+                <h3>Verifiable &amp; open</h3>
+                <p>Litecoin-lineage core, a public explorer and open tooling. Don't trust us — check the chain yourself.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================== EMISSION CURVE -->
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="cine-emission">
+            <div class="cine-emission-copy cine-reveal">
+                <span class="mb-eyebrow">Tokenomics</span>
+                <h2>A supply you can <span class="cine-shine">count on.</span></h2>
+                <p>Every MBITE enters through one public emission schedule — no premine, no insider unlocks. The block reward starts at 10 MBITE and halves every 700,000 blocks, so issuance bends toward a hard asymptotic cap of 13,999,999.909 MBITE and never crosses it.</p>
+                <div class="cine-emission-stats">
+                    <div class="cine-emission-stat"><div class="v">13,999,999.909</div><div class="k">Max supply (MBITE)</div></div>
+                    <div class="cine-emission-stat"><div class="v">10 MBITE</div><div class="k">Genesis block reward</div></div>
+                    <div class="cine-emission-stat"><div class="v">700,000</div><div class="k">Blocks per halving</div></div>
+                    <div class="cine-emission-stat"><div class="v">2.5 min</div><div class="k">Target block time</div></div>
+                </div>
+            </div>
+
+            <div class="cine-reveal">
+                <div class="cine-chart">
+                    <svg viewBox="0 0 600 320" role="img" aria-label="MoonBite cumulative supply curve approaching its 13,999,999.909 MBITE cap, with reward halvings marked.">
+                        <defs>
+                            <linearGradient id="cineCurveGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0" stop-color="#7c5cff"/>
+                                <stop offset="0.6" stop-color="#34d3ff"/>
+                                <stop offset="1" stop-color="#22e5a8"/>
+                            </linearGradient>
+                            <linearGradient id="cineAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="rgba(124,92,255,0.32)"/>
+                                <stop offset="1" stop-color="rgba(52,211,255,0.02)"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- cap line -->
+                        <line class="cine-chart-cap" x1="40" y1="46" x2="588" y2="46"/>
+                        <text class="cine-chart-cap-label" x="44" y="40">13,999,999.909 cap</text>
+
+                        <!-- halving markers -->
+                        <g>
+                            <line class="cine-halving" x1="150" y1="46" x2="150" y2="286"/>
+                            <circle class="cine-halving-dot" cx="150" cy="128" r="3.5"/>
+                            <text class="cine-halving-label" x="150" y="302" text-anchor="middle">H1</text>
+
+                            <line class="cine-halving" x1="286" y1="46" x2="286" y2="286"/>
+                            <circle class="cine-halving-dot" cx="286" cy="86" r="3.5"/>
+                            <text class="cine-halving-label" x="286" y="302" text-anchor="middle">H2</text>
+
+                            <line class="cine-halving" x1="420" y1="46" x2="420" y2="286"/>
+                            <circle class="cine-halving-dot" cx="420" cy="63" r="3.5"/>
+                            <text class="cine-halving-label" x="420" y="302" text-anchor="middle">H3</text>
+                        </g>
+
+                        <!-- area fill under the curve -->
+                        <path class="cine-curve-area" d="M40 286 C 95 210, 130 150, 150 128 C 210 78, 250 92, 286 86 C 350 74, 380 66, 420 63 C 500 56, 540 52, 588 50 L 588 286 Z"/>
+                        <!-- the emission curve (drawn on scroll) -->
+                        <path class="cine-curve-line" d="M40 286 C 95 210, 130 150, 150 128 C 210 78, 250 92, 286 86 C 350 74, 380 66, 420 63 C 500 56, 540 52, 588 50"/>
+
+                        <!-- axis captions -->
+                        <text class="cine-chart-axis" x="40" y="316">Genesis</text>
+                        <text class="cine-chart-axis" x="588" y="316" text-anchor="end">Time →</text>
+                    </svg>
+                </div>
+                <p class="mb-card-text" style="text-align:center; margin-top:0.9rem; font-size:0.85rem;">Illustrative emission schedule — not a price or market forecast.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================== MINING TEASER -->
+<section class="mb-section" style="background: var(--bg-primary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-teaser">
+            <div class="mb-teaser-copy cine-reveal">
+                <span class="mb-eyebrow">Mining</span>
+                <h2>Watch blocks come to life.</h2>
+                <p>MoonBite ships a cinematic live mining reactor — a real-time view of the network finding blocks. Fire up a miner and see your work land on-chain.</p>
+                <a href="/mine" class="btn btn-primary">Explore mining</a>
+            </div>
+            <div class="cine-reveal">
+                <div class="mb-card" style="text-align:center;">
+                    <div style="font-size:3.4rem;">⚛️</div>
+                    <div class="mb-card-title">Live Reactor</div>
+                    <p class="mb-card-text">Proof-of-work, visualized. No install required to watch.</p>
+                    <a href="/mining" class="btn btn-secondary btn-large">Launch reactor</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================== DEV TEASER -->
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-teaser mb-teaser-rev">
+            <div class="cine-reveal">
+                <pre class="mb-code"><span class="mb-c-comment"># Query live chain state — read-only, no auth</span>
+curl -s https://your-node/api/blockchain/<span class="mb-c-key">info</span>
+
+<span class="mb-c-comment"># → { "height": 128, "tip_hash": "…",</span>
+<span class="mb-c-comment">#     "total_money_coins": 1280, … }</span></pre>
+            </div>
+            <div class="mb-teaser-copy cine-reveal">
+                <span class="mb-eyebrow">Developers</span>
+                <h2>Build on an open network.</h2>
+                <p>A clean read-only REST API for blocks, transactions and search — plus everything you need to run your own node. No keys required to read the chain.</p>
+                <a href="/developers" class="btn btn-primary">Read the docs</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================== ROADMAP -->
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-section-head cine-reveal">
+            <span class="mb-eyebrow">Roadmap</span>
+            <h2 class="mb-section-title">From pre-launch to listing</h2>
+            <p class="mb-section-sub">Where MoonBite is today and where it's headed. Honest statuses, no hype.</p>
+        </div>
+        {% include "partials/roadmap.html" %}
+    </div>
+</section>
+
+<!-- ===================================================== NEWSLETTER -->
+<section class="mb-section">
+    <div class="mb-container">
+        {% set notify_title = "Be first to know when MBITE lists" %}
+        {% set notify_source = "home-footer" %}
+        {% include "partials/notify_form.html" %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts_extra %}
+<script defer src="{{ url_for('static', filename='home-cinematic.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}MBITE Markets — exchange listings coming soon{% endblock %}
+{% block meta_description %}MoonBite (MBITE) is not yet listed on any exchange. Get notified the moment a listing goes live — no price predictions, no spam.{% endblock %}
+
+{% block content %}
+<section class="mb-hero">
+    <div class="mb-hero-glow"></div>
+    <div class="mb-container">
+        <div class="mb-hero-inner">
+            <span class="mb-badge"><span class="mb-dot"></span> Not yet listed</span>
+            <h1 class="mb-hero-title">Markets are <span class="mb-gradient-text">coming soon.</span></h1>
+            <p class="mb-hero-sub">MoonBite isn't trading on any exchange yet. When MBITE lists, this is where you'll find it. Until then, the only way to get MBITE is to mine it.</p>
+            <div class="mb-cta-row">
+                <a href="#notify" class="btn btn-primary mb-btn-xl">Get Notified</a>
+                <a href="/mine" class="btn btn-secondary mb-btn-xl">Mine MBITE</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-banner mb-reveal" style="margin-bottom: var(--spacing-2xl);">
+            <span>⚠️ <strong>No live market value yet.</strong> MBITE is pre-mainnet. There are no prices, order books or trading pairs — and MoonBite is <strong>not an investment or a security</strong>.</span>
+        </div>
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Listing status</span>
+            <h2 class="mb-section-title">Where MBITE will trade</h2>
+            <p class="mb-section-sub">We'll update this page as listings are confirmed. No exchange partnerships are announced yet.</p>
+        </div>
+        <div class="mb-exchange-grid">
+            <div class="mb-exchange-card mb-reveal"><div class="mb-exchange-logo">🏦</div><div class="mb-exchange-name">Centralized exchange</div><span class="mb-soon-chip">Coming soon</span></div>
+            <div class="mb-exchange-card mb-reveal"><div class="mb-exchange-logo">🔁</div><div class="mb-exchange-name">DEX pair</div><span class="mb-soon-chip">Coming soon</span></div>
+            <div class="mb-exchange-card mb-reveal"><div class="mb-exchange-logo">📊</div><div class="mb-exchange-name">Price trackers</div><span class="mb-soon-chip">Coming soon</span></div>
+            <div class="mb-exchange-card mb-reveal"><div class="mb-exchange-logo">💧</div><div class="mb-exchange-name">Liquidity</div><span class="mb-soon-chip">Coming soon</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-section" id="notify" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        {% set notify_title = "Get the listing announcement" %}
+        {% set notify_text = "Leave your email and we'll tell you the moment MBITE is tradable somewhere. That's the only thing we'll send." %}
+        {% set notify_source = "markets" %}
+        {% include "partials/notify_form.html" %}
+    </div>
+</section>
+
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-banner mb-reveal">
+            <span>MoonBite is a pre-mainnet, open-source project. Nothing on this page is financial advice or an offer to sell a security.</span>
+        </div>
+    </div>
+</section>
+{% endblock %}
