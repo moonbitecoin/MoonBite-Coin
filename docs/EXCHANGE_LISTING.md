@@ -100,11 +100,11 @@ Provide a single authoritative info sheet. Fill in the bracketed launch values.
 |---------------------|---------------------------------------------------|
 | Name                | BigCoin                                           |
 | Ticker              | BIG                                               |
-| Algorithm           | Scrypt (PoW)                                       |
+| Algorithm           | RandomX (PoW)                                      |
 | Block time          | 2.5 minutes                                        |
-| Initial reward      | 50 BIG                                             |
-| Halving             | every 840,000 blocks                              |
-| Max supply          | 84,000,000 BIG                                     |
+| Initial reward      | 10 BIG                                             |
+| Halving             | every 1,000,000 blocks                            |
+| Max supply          | 19,999,999.87 BIG                                 |
 | Address prefix      | `B` (base58) / `big1...` (bech32)                 |
 | P2P port            | 9444 (mainnet) / 19555 (testnet)                  |
 | RPC port            | 9445                                              |

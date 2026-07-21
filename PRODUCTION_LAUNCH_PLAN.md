@@ -12,12 +12,12 @@
 | Parameter            | Value                          | Why |
 |----------------------|--------------------------------|-----|
 | Name / Ticker        | BigCoin / **BIG**              | Reuse existing brand |
-| Base to fork         | **Litecoin Core** (Bitcoin fork, Scrypt) | Most exchange-integrated, simplest PoW change |
-| PoW algorithm        | **Scrypt** (or RandomX for CPU-friendly) | Scrypt = proven & GPU-mineable; RandomX = "mine on any PC" |
-| Max supply           | 84,000,000 BIG                 | Litecoin-like scarcity |
+| Base to fork         | **Litecoin Core** (Bitcoin fork)         | Most exchange-integrated, simplest PoW change |
+| PoW algorithm        | **RandomX** (CPU-friendly, ASIC-resistant) | Mine on any PC; CPU-optimized like Monero |
+| Max supply           | 19,999,999.87 BIG              | Tighter-than-Litecoin scarcity |
 | Block time           | 2.5 minutes                    | Fast confirmations, proven |
-| Initial block reward | 50 BIG                         | Familiar economics |
-| Halving interval     | 840,000 blocks (~4 yrs)        | Predictable issuance |
+| Initial block reward | 10 BIG                         | Familiar economics |
+| Halving interval     | 1,000,000 blocks (~4.75 yrs)   | Predictable issuance |
 | Premine              | **≤ 1%** (or 0)                | Large premines look like scams → exchanges reject |
 | Address prefix       | custom (e.g. "B..." / bech32 `big1`) | Brand identity |
 | P2P / RPC ports      | custom (avoid 8333/9333)       | Network separation |

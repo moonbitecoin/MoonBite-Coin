@@ -1,24 +1,25 @@
 # Mining BigCoin (BIG)
 
-BigCoin is a Scrypt proof-of-work coin (a Litecoin/Bitcoin Core fork). This guide
-covers testing your setup on regtest, solo mining, CPU/GPU mining, and joining a
+BigCoin is a RandomX proof-of-work coin (a Litecoin/Bitcoin Core fork). This guide
+covers testing your setup on regtest, solo mining, CPU mining, and joining a
 pool.
 
 ## Key network parameters
 
 | Parameter              | Value                         |
 |------------------------|-------------------------------|
-| PoW algorithm          | Scrypt (`scrypt(1024, 1, 1)`) |
+| PoW algorithm          | RandomX (CPU-optimized)       |
 | Target block time      | 2.5 minutes (150 s)           |
-| Initial block reward   | 50 BIG                        |
-| Halving interval       | every 840,000 blocks          |
-| Max supply             | 84,000,000 BIG                |
+| Initial block reward   | 10 BIG                        |
+| Halving interval       | every 1,000,000 blocks        |
+| Max supply             | 19,999,999.87 BIG             |
 | Mainnet P2P port       | 9444                          |
 | Testnet P2P port       | 19555                         |
 | RPC default port       | 9445                          |
 
-> Because BigCoin uses **Scrypt** (like Litecoin/Dogecoin), you cannot mine it
-> with Bitcoin's SHA-256 ASICs or SHA-256 miners. Use Scrypt-capable miners.
+> Because BigCoin uses **RandomX** (like Monero), it is CPU-optimized and
+> ASIC-resistant. Mine it with a CPU using a RandomX-capable miner — SHA-256
+> ASICs and GPU miners have little to no advantage on RandomX.
 
 ---
 
@@ -61,7 +62,7 @@ use `getblocktemplate` to fetch work, then submit solved blocks with
 bigcoin-cli -regtest getblocktemplate '{"rules": ["segwit"]}'
 
 # ... your miner builds the block header, finds a nonce whose
-#     scrypt hash meets the target, serializes the block ...
+#     RandomX hash meets the target, serializes the block ...
 
 bigcoin-cli -regtest submitblock <hex-encoded-block>
 ```
@@ -75,31 +76,29 @@ For local testing you almost always just use `generatetoaddress`. Use
 
 ---
 
-## 2. CPU mining with cpuminer / cpuminer-multi
+## 2. CPU mining with a RandomX miner
 
-[cpuminer](https://github.com/pooler/cpuminer) (a.k.a. `minerd`, "pooler's
-cpuminer") and [cpuminer-multi](https://github.com/tpruvot/cpuminer-multi)
-support the Scrypt algorithm and the stratum protocol.
+RandomX is a CPU-optimized proof-of-work. You mine it with a RandomX-capable
+CPU miner (the xmrig-class of RandomX miners) speaking the stratum protocol to a
+pool. GPUs and ASICs have little to no advantage over CPUs on RandomX, so a
+modern multi-core CPU with enough RAM (RandomX uses a large dataset) is the
+right tool.
 
-Build cpuminer with Scrypt support (already the default in pooler's cpuminer):
+Build/obtain a RandomX-capable CPU miner:
 
 ```bash
-git clone https://github.com/pooler/cpuminer.git
-cd cpuminer
-./autogen.sh
-./configure CFLAGS="-O3"
-make
+# TODO: exact RandomX miner + build steps for BigCoin TBD
+# (a RandomX/xmrig-class CPU miner pointed at a BigCoin RandomX stratum pool)
 ```
 
 ### CPU mining against a pool (stratum)
 
 ```bash
-minerd \
-  --algo=scrypt \
-  --url=stratum+tcp://POOL_HOST:POOL_PORT \
-  --user=YOUR_BIG_ADDRESS.workername \
-  --pass=x \
-  --threads=4
+# TODO: exact RandomX miner command line for BigCoin TBD
+# Point your RandomX CPU miner at the pool's stratum endpoint:
+#   --url=stratum+tcp://POOL_HOST:POOL_PORT
+#   --user=YOUR_BIG_ADDRESS.workername
+#   --pass=x
 ```
 
 Replace `POOL_HOST:POOL_PORT` with your pool's stratum endpoint, and
@@ -109,59 +108,29 @@ the password.
 
 ### CPU "solo" mining via a local stratum bridge
 
-The core daemon speaks JSON-RPC (`getblocktemplate`), **not** stratum. cpuminer
-speaks stratum. To solo mine with cpuminer you need a small stratum bridge/proxy
-that translates between the two — for example a lightweight solo pool such as
-`ckpool -A` (solo mode), or a `getblocktemplate` proxy. Point the bridge at your
-`bigcoind` RPC (port 9445) and point cpuminer at the bridge:
+The core daemon speaks JSON-RPC (`getblocktemplate`), **not** stratum. RandomX
+CPU miners speak stratum. To solo mine you need a small stratum bridge/proxy
+that translates between the two — for example a lightweight solo pool or a
+`getblocktemplate` proxy that supports RandomX. Point the bridge at your
+`bigcoind` RPC (port 9445) and point your RandomX miner at the bridge:
 
 ```bash
 # 1) run bigcoind with RPC enabled (see NODE_SETUP.md)
-# 2) run a getblocktemplate->stratum bridge pointed at 127.0.0.1:9445
-# 3) point cpuminer at the bridge:
-minerd --algo=scrypt \
-  --url=stratum+tcp://127.0.0.1:3333 \
-  --user=YOUR_BIG_ADDRESS \
-  --pass=x
+# 2) run a getblocktemplate->stratum bridge (RandomX) pointed at 127.0.0.1:9445
+# 3) point your RandomX CPU miner at the bridge:
+# TODO: exact RandomX miner command + a RandomX-aware getblocktemplate/stratum
+#       bridge for BigCoin TBD
+#   --url=stratum+tcp://127.0.0.1:3333
+#   --user=YOUR_BIG_ADDRESS
+#   --pass=x
 ```
-
-Some cpuminer builds also support `getwork`/`getblocktemplate` directly via an
-`http://user:pass@127.0.0.1:9445` URL, but stratum is the well-supported path.
 
 ---
 
-## 3. GPU mining (Scrypt)
-
-Scrypt is memory-hard, so GPU mining gives a large speedup over CPUs. Historic
-Scrypt GPU miners include:
-
-- **cgminer (Scrypt-capable 3.7.2 branch)** — legacy, AMD/OpenCL.
-- **sgminer** — OpenCL, AMD.
-- **ccminer (tpruvot)** — NVIDIA/CUDA, has a `scrypt` kernel.
-
-Example (sgminer, pool):
-
-```bash
-sgminer -k scrypt \
-  -o stratum+tcp://POOL_HOST:POOL_PORT \
-  -u YOUR_BIG_ADDRESS.workername -p x \
-  --thread-concurrency 8192
-```
-
-Notes:
-
-- Scrypt GPU miners are old and finicky; expect to tune intensity,
-  thread-concurrency, and driver versions.
-- Because Scrypt Litecoin-class coins also have ASICs, GPU mining is generally
-  only competitive on a **new, low-difficulty** network (see below).
-
----
-
-## 4. Joining a mining pool
+## 3. Joining a mining pool
 
 A pool aggregates many miners' hash power and pays out proportionally, smoothing
-your rewards. To join, you point any Scrypt miner (CPU or GPU) at the pool's
-stratum URL.
+your rewards. To join, you point any RandomX CPU miner at the pool's stratum URL.
 
 Stratum URL format (placeholder — use your pool's real values):
 
@@ -175,23 +144,24 @@ Typical worker credentials:
 |----------|--------------------------------------------------|
 | Username | `YOUR_BIG_ADDRESS.workername`                    |
 | Password | `x` (or whatever the pool specifies)             |
-| Algo     | `scrypt`                                          |
+| Algo     | `randomx`                                         |
 
 Example:
 
 ```bash
-minerd --algo=scrypt \
-  --url=stratum+tcp://big-pool.example.com:3333 \
-  --user=BqExampleAddressXXXXXXXXXXXXXXXXXXXX.rig1 \
-  --pass=x
+# TODO: exact RandomX miner command line for BigCoin TBD
+# Point your RandomX CPU miner at the pool:
+#   --url=stratum+tcp://big-pool.example.com:3333
+#   --user=BqExampleAddressXXXXXXXXXXXXXXXXXXXX.rig1
+#   --pass=x
 ```
 
 Because BigCoin is new, there may be no public pools yet. Early on you may need
-to run your own solo pool (e.g. `ckpool` in solo mode) as described in section 2.
+to run your own solo pool (RandomX-capable) as described in section 2.
 
 ---
 
-## 5. Profitability — an honest note
+## 4. Profitability — an honest note
 
 There are **no profit promises here.** Whether mining earns anything at all
 depends entirely on:
@@ -205,7 +175,7 @@ depends entirely on:
 What is true of new networks:
 
 - **Early networks have very low difficulty.** When few miners are online, even a
-  CPU or a single GPU can find blocks. This is by design and is temporary.
+  single CPU can find blocks. This is by design and is temporary.
 - As hash power grows, difficulty retargets upward and per-miner rewards drop.
 - Do not spend money on hardware or electricity expecting a return. Treat early
   mining as experimentation and network bootstrapping, not investment.

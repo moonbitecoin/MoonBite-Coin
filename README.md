@@ -1,6 +1,6 @@
 # Big Coin (BIG)
 
-**A fast, open, mineable Scrypt proof-of-work cryptocurrency** — forked from battle-tested Litecoin / Bitcoin Core. 2.5-minute blocks, an 84,000,000 hard-cap supply, and a fair launch. Mine it with a CPU or GPU; hold it in a non-custodial wallet.
+**A fast, open, mineable RandomX proof-of-work cryptocurrency** — forked from battle-tested Litecoin / Bitcoin Core. 2.5-minute blocks, a 19,999,999.87 hard-cap supply, and a fair launch. Mine it with a CPU (RandomX is ASIC-resistant and CPU-optimized); hold it in a non-custodial wallet.
 
 > ⚠️ **Experimental software.** Big Coin is a community/experimental cryptocurrency, not an investment or a security. It has not had a production security audit. Verify all software before use and only participate with what you can afford to lose.
 
@@ -11,17 +11,17 @@
 | Parameter | Value |
 | --- | --- |
 | Ticker | **BIG** |
-| Algorithm | **Scrypt** `scrypt(1024, 1, 1)` (Proof-of-Work) |
-| Max supply | **84,000,000 BIG** |
-| Initial block reward | 50 BIG |
-| Halving interval | every 840,000 blocks (~4 years) |
+| Algorithm | **RandomX** (Proof-of-Work, CPU-optimized / ASIC-resistant) |
+| Max supply | **19,999,999.87 BIG** |
+| Initial block reward | 10 BIG |
+| Halving interval | every 1,000,000 blocks (~4.75 years) |
 | Target block time | 2.5 minutes (150 s) |
 | Difficulty retarget | every 2,016 blocks (~3.5 days) |
 | Address format | bech32 `big1…` (mainnet) / `tbig1…` (testnet) |
 | Mainnet P2P port | 9444 |
 | RPC port | 9445 |
 
-Because Big Coin uses **Scrypt** (like Litecoin/Dogecoin), it **cannot** be mined with Bitcoin's SHA-256 ASICs — use a Scrypt-capable miner.
+Because Big Coin uses **RandomX** (like Monero), it is CPU-optimized and ASIC-resistant — mine it with a CPU using a RandomX-capable miner.
 
 ---
 
@@ -45,7 +45,7 @@ In addition, the repository root contains a **from-scratch Python reference impl
 ## Quick start
 
 ### Mine on testnet
-See [`docs/MINING.md`](docs/MINING.md). In short: run `bigcoind`, point a Scrypt miner (cpuminer / ccminer / sgminer) at a stratum bridge or pool, and mine to a Big Coin address.
+See [`docs/MINING.md`](docs/MINING.md). In short: run `bigcoind`, point a RandomX CPU miner at a stratum bridge or pool, and mine to a Big Coin address.
 
 ### Run the block explorer locally
 ```bash
