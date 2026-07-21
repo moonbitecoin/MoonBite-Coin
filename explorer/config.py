@@ -58,7 +58,7 @@ MINING_MAXTRIES = int(os.environ.get("MINING_MAXTRIES", "500000"))
 # from the explorer). Comma-separated; "*" allows any origin.
 MINING_CORS_ORIGINS = os.environ.get(
     "MINING_CORS_ORIGINS",
-    "https://moonbite.org,https://www.moonbite.org,https://moonbitelabs.github.io",
+    "https://moonbite.org,https://www.moonbite.org,https://moonbitecoin.github.io",
 )
 
 

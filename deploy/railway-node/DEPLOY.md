@@ -27,8 +27,8 @@ order — the explorer needs the node to exist first.
 
 **Prompt to paste into your Railway browser session:**
 
-> Deploy a service on Railway from the GitHub repo **moonbitelabs/moonbite**.
-> - New Project → "Deploy from GitHub repo" → select `moonbitelabs/moonbite`.
+> Deploy a service on Railway from the GitHub repo **moonbitecoin/MoonBite-Coin**.
+> - New Project → "Deploy from GitHub repo" → select `moonbitecoin/MoonBite-Coin`.
 > - Name the service **moonbite-node**.
 > - In **Settings → Build**: set **Root Directory** to `/` (repo root) and
 >   **Dockerfile Path** to `deploy/railway-node/Dockerfile`
@@ -57,8 +57,8 @@ After it's up, note two things:
 **Prompt to paste into your Railway browser session:**
 
 > In the same Railway project, add another service from the GitHub repo
-> **moonbitelabs/moonbite**.
-> - "Deploy from GitHub repo" → select `moonbitelabs/moonbite`.
+> **moonbitecoin/MoonBite-Coin**.
+> - "Deploy from GitHub repo" → select `moonbitecoin/MoonBite-Coin`.
 > - Name it **moonbite-explorer**.
 > - In **Settings → Root Directory**, set it to `explorer` (the repo's
 >   `explorer/railway.json` defines the Nixpacks build; start command is
