@@ -22,9 +22,11 @@ from flask import Flask, jsonify, render_template, request, send_from_directory
 
 # Pragmatic email validation for the listing-notify capture.
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+import exchange
+import merchants
 from node import Node
 from transaction import generate_keypair, pubkey_hash
-from wallet import address_from_pubkey_hash
+from wallet import address_from_pubkey_hash, is_valid_address, pubkey_hash_from_address
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
@@ -53,6 +55,29 @@ def get_node() -> Node:
     if app.node is None:
         app.node = Node("web-app", coinbase_maturity=0)
     return app.node
+
+
+def received_at_address(address: str) -> int:
+    """Total base units ever paid to `address` across the active chain.
+
+    Watch-only style, monotonic (never drops when the merchant later spends), so
+    it is a stable baseline for detecting a specific inbound invoice payment.
+    Non-custodial: we only *observe* the chain; we never move or hold funds.
+    """
+    try:
+        pkh = pubkey_hash_from_address(address)
+    except Exception:
+        return 0
+    node = get_node()
+    chain = node.chain
+    total = 0
+    for block_hash in chain.active_chain():
+        block = chain.blocks[block_hash]
+        for tx in block.transactions:
+            for out in tx.outputs:
+                if out.pubkey_hash == pkh:
+                    total += out.amount
+    return total
 
 
 def mining_worker(blocks_to_mine: int, miner_address: str) -> None:
@@ -112,6 +137,12 @@ def mine_page():
 def markets_page():
     """Render the markets / listings landing page."""
     return render_template("markets.html")
+
+
+@app.route("/merchants")
+def merchants_page():
+    """Render the merchant directory + accept-MBITE pay-flow page."""
+    return render_template("merchants.html")
 
 
 @app.route("/developers")
@@ -176,6 +207,147 @@ def api_notify():
         pass
 
     return jsonify({"status": "success", "message": "You're on the list"})
+
+
+# ============================================================================= #
+# API Routes — Internal Exchange (non-custodial order book)
+#
+# The server matchmakes order *intents* only. It never holds coins, keys, or
+# balances; settlement is a wallet-to-wallet atomic swap off this server.
+# ============================================================================= #
+
+
+@app.route("/api/exchange/pairs", methods=["GET"])
+def api_exchange_pairs():
+    """List the trading pairs the order book supports."""
+    return jsonify({"status": "success", "pairs": exchange.SUPPORTED_PAIRS}), 200
+
+
+@app.route("/api/exchange/orders", methods=["GET"])
+def api_exchange_orders():
+    """Return the order book (bids/asks) for a pair, or all open orders."""
+    pair = request.args.get("pair")
+    status = request.args.get("status", "open")
+    try:
+        book = exchange.list_orders(pair=pair, status=status)
+        return jsonify({"status": "success", **book}), 200
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+
+@app.route("/api/exchange/order", methods=["POST"])
+def api_exchange_create_order():
+    """Post a new public order intent to the book."""
+    data = request.get_json(silent=True) or {}
+    try:
+        order = exchange.create_order(
+            side=str(data.get("side", "")).strip(),
+            pair=str(data.get("pair", "")).strip(),
+            price=data.get("price"),
+            amount=data.get("amount"),
+            mbite_address=data.get("mbite_address", ""),
+            quote_address=data.get("quote_address", ""),
+        )
+        return jsonify({"status": "success", "order": order}), 201
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+
+@app.route("/api/exchange/order/<order_id>", methods=["GET"])
+def api_exchange_get_order(order_id: str):
+    """Fetch a single order by id."""
+    order = exchange.get_order(order_id)
+    if order is None:
+        return jsonify({"status": "error", "message": "order not found"}), 404
+    return jsonify({"status": "success", "order": order}), 200
+
+
+@app.route("/api/exchange/order/<order_id>/cancel", methods=["POST"])
+def api_exchange_cancel_order(order_id: str):
+    """Cancel an open order — only the maker (by MBITE address) may do so."""
+    data = request.get_json(silent=True) or {}
+    try:
+        order = exchange.cancel_order(order_id, str(data.get("mbite_address", "")))
+        return jsonify({"status": "success", "order": order}), 200
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+
+@app.route("/api/exchange/order/<order_id>/settle", methods=["GET"])
+def api_exchange_settle_hint(order_id: str):
+    """Return the atomic-swap hand-off instructions for a matched order."""
+    try:
+        return jsonify({"status": "success", **exchange.settle_hint(order_id)}), 200
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 404
+
+
+# ============================================================================= #
+# API Routes — Merchant adoption (non-custodial "Accept MBITE")
+#
+# A directory of businesses that voluntarily accept MBITE, plus invoices they
+# raise. The server never holds funds — a payment is *observed* on-chain at the
+# merchant's own address; settlement is wallet-to-wallet.
+# ============================================================================= #
+
+
+@app.route("/api/merchants", methods=["GET"])
+def api_merchants_list():
+    """List merchants in the directory, optionally filtered by category."""
+    category = request.args.get("category")
+    try:
+        rows = merchants.list_merchants(category=category)
+        return jsonify(
+            {"status": "success", "merchants": rows, "categories": list(merchants.CATEGORIES)}
+        ), 200
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+
+@app.route("/api/merchants", methods=["POST"])
+def api_merchants_add():
+    """Register a merchant that accepts MBITE (opt-in)."""
+    data = request.get_json(silent=True) or {}
+    try:
+        row = merchants.add_merchant(
+            name=data.get("name"),
+            category=str(data.get("category", "")).strip(),
+            mbite_address=data.get("mbite_address", ""),
+            url=data.get("url", ""),
+            blurb=data.get("blurb", ""),
+            address_validator=is_valid_address,
+        )
+        return jsonify({"status": "success", "merchant": row}), 201
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+
+@app.route("/api/merchant/invoice", methods=["POST"])
+def api_merchant_invoice_create():
+    """Raise a non-custodial payment request against a merchant address."""
+    data = request.get_json(silent=True) or {}
+    try:
+        inv = merchants.create_invoice(
+            address=data.get("address", ""),
+            amount=data.get("amount"),
+            received_lookup=received_at_address,
+            merchant_id=data.get("merchant_id"),
+            memo=data.get("memo", ""),
+            address_validator=is_valid_address,
+        )
+        return jsonify({"status": "success", "invoice": inv}), 201
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+
+@app.route("/api/merchant/invoice/<invoice_id>", methods=["GET"])
+def api_merchant_invoice_status(invoice_id: str):
+    """Poll an invoice — re-checks the chain for payment each call."""
+    try:
+        inv = merchants.invoice_status(invoice_id, received_at_address)
+        return jsonify({"status": "success", "invoice": inv}), 200
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 404
 
 
 # ============================================================================= #
