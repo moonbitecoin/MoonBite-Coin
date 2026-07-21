@@ -11,6 +11,7 @@ __pycache__/
 build/
 dist/
 *.egg-info/
+moonbite-site/moonbite-site.zip
 
 # Virtual environments
 .venv/
