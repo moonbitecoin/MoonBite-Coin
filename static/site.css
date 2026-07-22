@@ -473,6 +473,33 @@ a.mb-card:hover, .mb-card.mb-hoverable:hover {
 .mb-download-card h3 { margin: 0; font-size: 1.05rem; }
 .mb-download-card .mb-dl-meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); }
 .mb-download-card .btn { margin-top: auto; }
+.mb-download-card.mb-soon { border-style: dashed; }
+.mb-download-card.mb-soon .mb-dl-os { opacity: 0.6; }
+.mb-download-card.mb-soon .mb-soon-chip { align-self: flex-start; }
+
+/* Featured (flagship) download — the MoonBite Reactor desktop app */
+.mb-download-card.mb-featured {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-xl);
+    border: 1px solid rgba(124, 92, 255, 0.4);
+    background:
+        radial-gradient(700px 300px at 90% -30%, rgba(124, 92, 255, 0.18), transparent 60%),
+        radial-gradient(500px 260px at -10% 130%, rgba(51, 225, 237, 0.12), transparent 60%),
+        var(--card-bg-solid, var(--bg-secondary));
+    box-shadow: 0 0 60px rgba(124, 92, 255, 0.18);
+}
+.mb-download-card.mb-featured .mb-featured-body { position: relative; z-index: 1; max-width: 720px; }
+.mb-download-card.mb-featured .mb-featured-title {
+    margin: var(--spacing-sm) 0 4px;
+    font-size: 1.8rem; line-height: 1.1;
+}
+.mb-download-card.mb-featured .mb-soon-chip { align-self: flex-start; }
+@media (max-width: 620px) {
+    .mb-download-card.mb-featured .mb-cta-row { flex-direction: column; }
+    .mb-download-card.mb-featured .mb-cta-row .btn { width: 100%; }
+}
 
 /* --------------------------------------------------------------- footer */
 .mb-footer {

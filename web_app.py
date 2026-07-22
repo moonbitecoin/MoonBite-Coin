@@ -445,7 +445,7 @@ def api_blockchain_info():
             for tx in block.transactions
             for output in tx.outputs
         )
-        total_money_coins = total_money_satoshis // 100
+        total_money_coins = total_money_satoshis / 100_000_000
 
         return jsonify(
             {

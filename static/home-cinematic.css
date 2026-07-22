@@ -578,6 +578,250 @@
     .cine-reveal { opacity: 1 !important; transform: none !important; }
 }
 
+/* ============================================================================
+   ✦ 2050 FLAGSHIP LAYER — loaded only on / (after site.css, so it wins ties).
+   Turns the stacked mb-* sections into one cohesive, futuristic, "billion-dollar"
+   world: aurora ambience, holographic glass, gradient-lit edges, kinetic depth.
+   Reuses global tokens only. Zero effect on other pages. Motion-safe below.
+   ========================================================================== */
+
+/* ---- Aurora ambience: slow-drifting cosmic light woven behind the whole page,
+        so the hero's deep-space mood continues instead of ending at the fold. */
+body.mb-home { position: relative; }
+body.mb-home::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(60vw 50vh at 12% 18%, rgba(124, 92, 255, 0.10), transparent 60%),
+        radial-gradient(55vw 45vh at 88% 42%, rgba(52, 211, 255, 0.09), transparent 60%),
+        radial-gradient(50vw 45vh at 30% 82%, rgba(34, 229, 168, 0.07), transparent 62%);
+    background-size: 200% 200%, 200% 200%, 200% 200%;
+    animation: mbAurora 34s ease-in-out infinite alternate;
+}
+/* keep real content above the aurora */
+.mb-home main, .mb-home .mb-meganav, .mb-home .mb-footer { position: relative; z-index: 1; }
+
+/* ---- Section rhythm: a soft light source anchored to each header, so sections
+        read as designed scenes, not flat bands. */
+.mb-home .mb-section { position: relative; }
+.mb-home .mb-section-head { position: relative; }
+.mb-home .mb-section-head::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -120px;
+    width: min(640px, 90vw);
+    height: 300px;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(124, 92, 255, 0.16), transparent 72%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ---- Eyebrow → a crisp futuristic pill with a lit indicator dot. */
+.mb-home .mb-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.4rem 0.95rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--primary-color) 9%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 32%, transparent);
+    color: var(--primary-color-2);
+    box-shadow: 0 0 26px color-mix(in srgb, var(--primary-color) 16%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+.mb-home .mb-eyebrow::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--primary-color-2) 85%, transparent);
+}
+.mb-home .mb-section-title {
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    letter-spacing: -0.03em;
+}
+.mb-home .mb-section-sub { font-size: clamp(1rem, 1.6vw, 1.15rem); }
+
+/* ---- Holographic glass cards: real depth, a gradient-lit top edge, and a
+        conic aura that ignites on hover. This is the core "flagship" upgrade. */
+.mb-home .mb-card {
+    position: relative;
+    background:
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--bg-secondary) 55%, transparent),
+            color-mix(in srgb, var(--card-bg-solid) 94%, transparent));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in srgb, var(--border-color) 92%, transparent);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 24px 60px -34px rgba(0, 0, 0, 0.85);
+    overflow: hidden;
+    transition:
+        transform .34s cubic-bezier(.2,.8,.2,1),
+        border-color .34s ease,
+        box-shadow .34s ease;
+}
+/* gradient-lit top edge (subtle at rest, full on hover) */
+.mb-home .mb-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    opacity: 0.35;
+    transition: opacity .34s ease;
+}
+/* holo aura sweep, revealed on hover */
+.mb-home .mb-card::after {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    background: conic-gradient(from 0deg,
+        transparent 0deg,
+        rgba(124, 92, 255, 0.14) 60deg,
+        rgba(52, 211, 255, 0.12) 140deg,
+        transparent 220deg);
+    opacity: 0;
+    transition: opacity .5s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+.mb-home .mb-card > * { position: relative; z-index: 1; }
+.mb-home a.mb-card:hover,
+.mb-home .mb-card.mb-hoverable:hover {
+    transform: translateY(-8px);
+    border-color: color-mix(in srgb, var(--primary-color) 60%, transparent);
+    box-shadow:
+        0 40px 70px -34px rgba(124, 92, 255, 0.55),
+        0 0 0 1px color-mix(in srgb, var(--primary-color) 35%, transparent),
+        var(--glow-primary);
+}
+.mb-home a.mb-card:hover::before,
+.mb-home .mb-card.mb-hoverable:hover::before { opacity: 1; }
+.mb-home a.mb-card:hover::after,
+.mb-home .mb-card.mb-hoverable:hover::after { opacity: 1; animation: mbHolo 6s linear infinite; }
+
+/* ---- Feature blocks were naked <div>s — promote them to first-class glass
+        cards so "Why MoonBite" and "Proof, not promises" feel intentional. */
+.mb-home .mb-feature {
+    position: relative;
+    background:
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--bg-secondary) 48%, transparent),
+            color-mix(in srgb, var(--card-bg-solid) 92%, transparent));
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform .34s cubic-bezier(.2,.8,.2,1), border-color .34s ease, box-shadow .34s ease;
+}
+.mb-home .mb-feature::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity .34s ease;
+}
+.mb-home .mb-feature:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+    box-shadow: 0 34px 64px -36px rgba(0, 0, 0, 0.9), var(--glow-primary);
+}
+.mb-home .mb-feature:hover::before { opacity: 1; }
+
+/* ---- Icon tiles: bare emoji → luminous gradient chips with inner light. */
+.mb-home .mb-card-icon,
+.mb-home .mb-feature-icon {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    font-size: 1.65rem;
+    border-radius: 16px;
+    background:
+        linear-gradient(150deg,
+            color-mix(in srgb, var(--primary-color) 30%, transparent),
+            color-mix(in srgb, var(--primary-color-2) 16%, transparent));
+    border: 1px solid color-mix(in srgb, var(--primary-color) 32%, transparent);
+    box-shadow:
+        0 10px 26px -12px color-mix(in srgb, var(--primary-color) 65%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    margin-bottom: var(--spacing-xs);
+    transition: transform .34s cubic-bezier(.2,.8,.2,1);
+}
+.mb-home a.mb-card:hover .mb-card-icon,
+.mb-home .mb-feature:hover .mb-feature-icon {
+    transform: translateY(-3px) scale(1.06) rotate(-2deg);
+}
+
+/* ---- Card link → confident, warms to full white on hover. */
+.mb-home .mb-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 700;
+    transition: color .25s ease, gap .25s ease;
+}
+.mb-home a.mb-card:hover .mb-card-link,
+.mb-home .mb-feature:hover .mb-card-link {
+    color: var(--text-primary);
+    gap: 0.6rem;
+}
+
+/* ---- Live stat band → mission-control readout: gradient rail + hover glow. */
+.mb-home .mb-statband {
+    position: relative;
+    box-shadow: 0 34px 80px -46px rgba(0, 0, 0, 0.95);
+}
+.mb-home .mb-statband::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    z-index: 2;
+    background: var(--gradient-primary);
+    background-size: 200% auto;
+    animation: cineShine 5s linear infinite;
+}
+.mb-home .mb-stat { transition: background .3s ease; }
+.mb-home .mb-stat:hover {
+    background: color-mix(in srgb, var(--primary-color) 8%, var(--card-bg-solid));
+}
+.mb-home .mb-stat-value { font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -0.02em; }
+
+/* ---- Code block (dev teaser) → terminal from the future. */
+.mb-home .mb-code {
+    box-shadow: 0 30px 64px -40px rgba(0, 0, 0, 0.9), var(--glow-primary);
+    border-color: color-mix(in srgb, var(--primary-color) 22%, transparent);
+}
+
+/* ---- Motion safety for the new layer. */
+@media (prefers-reduced-motion: reduce) {
+    body.mb-home::after,
+    .mb-home .mb-statband::before,
+    .mb-home .mb-card::after { animation: none !important; }
+}
+
+@keyframes mbAurora {
+    0%   { background-position: 0% 0%,   100% 0%,   50% 100%; }
+    100% { background-position: 100% 100%, 0% 100%, 0% 0%; }
+}
+@keyframes mbHolo {
+    to { transform: rotate(360deg); }
+}
+
 /* ------------------------------------------------------- KEYFRAMES */
 @keyframes cineRise {
     to { opacity: 1; transform: none; }
@@ -620,4 +864,131 @@
 @keyframes cineMarquee {
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
+}
+
+/* ============================================================================
+   ✦ CONTINUOUS COSMOS — the ENTIRE page becomes one deep-space flight, not a
+   stack of slabs. A fixed far-starfield + a scrolling near-starfield create
+   real parallax depth; transparent sections let space show through; each scene
+   drifts in with cinematic motion. This is the "whole page is alive" upgrade.
+   ========================================================================== */
+
+/* The home is an intentionally always-dark cinematic flight. Re-assert the deep
+   space palette even under the light theme so the toggle can never produce
+   dark-text-on-dark-space; the rest of the site still themes normally. */
+html[data-theme="light"] body.mb-home {
+    --bg-primary: #05060d;
+    --bg-secondary: #0a0d1a;
+    --bg-tertiary: #131a2e;
+    --text-primary: #f2f4fb;
+    --text-secondary: #8991b3;
+    --border-color: rgba(255, 255, 255, 0.09);
+    --card-bg: rgba(255, 255, 255, 0.035);
+    --card-bg-solid: #0e1220;
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+    --glow-primary: 0 0 24px rgba(124, 92, 255, 0.45);
+}
+
+/* The page floor is deep space, and every section floats in it (no more slabs). */
+.mb-home { background: #04050c; }
+.mb-home main { background: transparent; }
+.mb-home .mb-section,
+.mb-home .mb-section-tight { background: transparent !important; border-top: 0 !important; border-bottom: 0 !important; }
+
+/* FAR starfield — fixed, so it barely moves: the distant sky you fly past. */
+body.mb-home::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: #04050c;
+    background-image:
+        radial-gradient(1.6px 1.6px at 40px 60px,  rgba(255,255,255,0.90), transparent),
+        radial-gradient(1.2px 1.2px at 130px 100px, rgba(200,210,255,0.70), transparent),
+        radial-gradient(1px 1px     at 90px 165px, rgba(255,255,255,0.55), transparent),
+        radial-gradient(1.4px 1.4px at 175px 40px,  rgba(180,220,255,0.65), transparent),
+        radial-gradient(1px 1px     at 20px 185px, rgba(255,255,255,0.50), transparent),
+        radial-gradient(1.2px 1.2px at 150px 150px, rgba(210,200,255,0.55), transparent);
+    background-size: 220px 220px;
+    background-repeat: repeat;
+}
+
+/* NEAR starfield — scrolls with the page, so it slides past faster = parallax. */
+.mb-home main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        radial-gradient(2.2px 2.2px at 60px 80px,   rgba(124,92,255,0.55), transparent),
+        radial-gradient(1.8px 1.8px at 260px 220px, rgba(52,211,255,0.45), transparent),
+        radial-gradient(2px 2px     at 380px 60px,   rgba(255,255,255,0.55), transparent),
+        radial-gradient(1.6px 1.6px at 160px 300px, rgba(34,229,168,0.40), transparent);
+    background-size: 420px 420px;
+    background-repeat: repeat;
+    opacity: 0.9;
+}
+
+/* Content rides above the cosmos. */
+.mb-home main, .mb-home .mb-meganav, .mb-home .mb-footer { position: relative; z-index: 1; }
+
+/* ---- Scene choreography: each section is a "shot" that drifts up into frame
+        with depth as it enters the viewport. JS feeds --enter (0 → 1). Falls
+        back to fully-shown (1) with no JS and under reduced-motion. */
+.mb-home .cine-scene-block {
+    --enter: 1;
+    position: relative;
+    z-index: 1;
+    transform: translate3d(0, calc((1 - var(--enter)) * 60px), 0)
+               scale(calc(0.975 + var(--enter) * 0.025));
+    transform-origin: center top;
+}
+/* A soft light-seam between scenes instead of a hard 2009 divider line. */
+.mb-home .cine-scene-block:not(.mb-section-tight)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(1100px, 84%);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124,92,255,0.35), rgba(52,211,255,0.28), transparent);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ---- Cinematic headlines: bigger, tighter, with a faint aura. */
+.mb-home .mb-section-title {
+    font-size: clamp(2.1rem, 5vw, 3.7rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-shadow: 0 0 60px rgba(124, 92, 255, 0.25);
+}
+.mb-home .cine-emission-copy h2,
+.mb-home .mb-teaser-copy h2 { font-size: clamp(2rem, 4.4vw, 3.2rem); letter-spacing: -0.03em; }
+
+/* ---- Staggered card cascade so grids reveal like a wave, not all at once. */
+.mb-home .mb-grid > .cine-reveal:nth-child(2) { transition-delay: 0.08s; }
+.mb-home .mb-grid > .cine-reveal:nth-child(3) { transition-delay: 0.16s; }
+.mb-home .mb-grid > .cine-reveal:nth-child(4) { transition-delay: 0.24s; }
+.mb-home .mb-grid > .cine-reveal:nth-child(5) { transition-delay: 0.32s; }
+.mb-home .mb-grid > .cine-reveal:nth-child(6) { transition-delay: 0.40s; }
+
+/* A touch more travel + scale on reveal for a filmic entrance. */
+.mb-home .cine-reveal {
+    transform: translateY(46px) scale(0.985);
+}
+.mb-home .cine-reveal.is-visible { transform: none; }
+
+/* Emission/teaser "island" surfaces glow a bit stronger now they float in space. */
+.mb-home .cine-chart,
+.mb-home .cine-emission-stat,
+.mb-home .mb-teaser .mb-card {
+    box-shadow: 0 30px 70px -38px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(124, 92, 255, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mb-home .cine-scene-block { transform: none !important; }
 }

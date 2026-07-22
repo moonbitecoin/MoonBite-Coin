@@ -270,4 +270,36 @@
     } else {
         revealEls.forEach(function (el) { el.classList.add("is-visible"); });
     }
+
+    /* ------------------------ SCENE CHOREOGRAPHY (whole-page cinema) */
+    // Feed each section a live --enter (0 → 1) tied to its viewport position,
+    // so the whole page reads as one continuous flight through space rather
+    // than a stack of static slabs. CSS turns --enter into drift + scale.
+    var sceneEls = document.querySelectorAll(".cine-scene-block");
+    if (sceneEls.length) {
+        if (reduce) {
+            for (var s = 0; s < sceneEls.length; s++) {
+                sceneEls[s].style.setProperty("--enter", "1");
+            }
+        } else {
+            var sceneTick = false;
+            var choreograph = function () {
+                var vh = window.innerHeight || 800;
+                var start = vh * 0.96, end = vh * 0.60;
+                for (var i = 0; i < sceneEls.length; i++) {
+                    var rect = sceneEls[i].getBoundingClientRect();
+                    var p = (start - rect.top) / (start - end);
+                    p = p < 0 ? 0 : (p > 1 ? 1 : p);
+                    p = 1 - Math.pow(1 - p, 3); // ease-out for a soft landing
+                    sceneEls[i].style.setProperty("--enter", p.toFixed(3));
+                }
+                sceneTick = false;
+            };
+            window.addEventListener("scroll", function () {
+                if (!sceneTick) { sceneTick = true; requestAnimationFrame(choreograph); }
+            }, { passive: true });
+            window.addEventListener("resize", choreograph, { passive: true });
+            choreograph();
+        }
+    }
 })();
