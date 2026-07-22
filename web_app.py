@@ -13,6 +13,7 @@ Educational use only — never holds real funds.
 from __future__ import annotations
 
 import json
+import os
 import re
 import threading
 import time
@@ -851,5 +852,11 @@ def add_cors_headers(response):
 if __name__ == "__main__":
     # Initialize the node on startup
     get_node()
-    print("MoonBite Dashboard starting on http://localhost:5000")
-    app.run(debug=True, host="localhost", port=5000)
+    # Production deploys run this under gunicorn (web_app:app) and never reach
+    # this block. When launched directly, honor the environment so the same
+    # file works locally (defaults) and on a server/PaaS (PORT/HOST/FLASK_DEBUG).
+    host = os.environ.get("HOST", "localhost")
+    port = int(os.environ.get("PORT", "5000"))
+    debug = os.environ.get("FLASK_DEBUG", "1") == "1"
+    print(f"MoonBite Dashboard starting on http://{host}:{port}")
+    app.run(debug=debug, host=host, port=port)

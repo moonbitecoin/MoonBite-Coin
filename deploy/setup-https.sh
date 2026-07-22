@@ -12,6 +12,11 @@
 set -euo pipefail
 
 DOMAIN="${DOMAIN:?export DOMAIN=your-domain.example (or <your-ip>.sslip.io) before running}"
+# Also cover the www host when the domain is an apex (has exactly one dot).
+WWW=""
+if [ "$(echo "$DOMAIN" | tr -cd '.' | wc -c)" = "1" ]; then
+    WWW="www.$DOMAIN"
+fi
 
 echo "=== 1/4  Install certbot ==="
 DEBIAN_FRONTEND=noninteractive apt-get install -y -qq certbot python3-certbot-nginx > /dev/null
@@ -20,7 +25,7 @@ echo "=== 2/4  Point nginx at the domain ==="
 cat > /etc/nginx/sites-available/moonbite-dashboard <<NGINX
 server {
     listen 80;
-    server_name $DOMAIN;
+    server_name $DOMAIN${WWW:+ $WWW};
 
     location / {
         proxy_pass http://127.0.0.1:8050;
@@ -37,7 +42,7 @@ nginx -t && systemctl reload nginx
 echo "=== 3/4  Issue certificate + enable HTTPS redirect ==="
 # --register-unsafely-without-email keeps this non-interactive; certbot still
 # installs a systemd timer that auto-renews the cert before expiry.
-certbot --nginx -d "$DOMAIN" \
+certbot --nginx -d "$DOMAIN" ${WWW:+-d "$WWW"} \
     --non-interactive --agree-tos \
     --register-unsafely-without-email \
     --redirect
@@ -49,3 +54,4 @@ nginx -t && systemctl reload nginx
 echo ""
 echo "=== DONE ==="
 echo "Dashboard live at: https://$DOMAIN"
+[ -n "$WWW" ] && echo "  (also covers https://$WWW)"

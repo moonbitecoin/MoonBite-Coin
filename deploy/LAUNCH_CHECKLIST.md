@@ -11,7 +11,7 @@ _Last updated: 2026-07-16_
 
 | Workstream | Status | Notes |
 |---|---|---|
-| Website | 🟢 Live | `moonbite.org` verified |
+| Website | 🔴 Not live | `moonbite.org` A record → 192.64.117.55 (Namecheap Stellar) serves an unrelated parked site. Must repoint DNS → DO VPS and deploy `web_app` (see "moonbite.org hosting" below). |
 | Deploy tooling (Railway kit) | 🟢 Done | `deploy/railway-node/` on `main` |
 | Qt / client rebrand | 🟡 Amber | Committed in source; not yet in shipped binaries |
 | Live seed node | 🔴 Red | No node exists yet |
@@ -80,3 +80,32 @@ Do **not** pull the `moon1` binary rebuild (step 4) into the launch critical
 path. It is cosmetic (address-prefix display only) and network-compatible with
 the shipped `big1` build. Bundling it in just delays a reachable network for no
 functional gain — ship it as a fast-follow.
+
+---
+
+## moonbite.org hosting (marketing site / dashboard)
+
+Target: serve `web_app:app` (Flask) from the DigitalOcean VPS behind nginx +
+Let's Encrypt. The Railway service stays the **node/explorer**; only the
+website moves here.
+
+**Prerequisite — get the new code onto GitHub.** The deploy `git clone`s from
+`moonbitecoin/MoonBite-Coin`. The local repo shares **no history** with
+`origin/main` (9 remote commits vs 7 local, no merge-base), so a plain push is
+rejected and force-push would destroy the remote. Reconcile deliberately (e.g.
+graft local work onto a branch off `origin/main`, or open a fresh branch/PR).
+**Never force-push `main`.** Until this lands, the VPS clone serves old code.
+
+1. **DNS (Namecheap → Advanced DNS):** change the `@` A record for
+   `moonbite.org` from `192.64.117.55` → **the DO droplet's public IP**; add a
+   `www` A record to the same IP (or CNAME `www` → `moonbite.org`). Drop the
+   Namecheap Stellar/parking records. TTL low (5 min) during cutover.
+2. **Deploy the app (root on the VPS):**
+   `curl -fsSL https://raw.githubusercontent.com/moonbitecoin/MoonBite-Coin/main/deploy/setup-dashboard.sh | bash`
+   (installs venv from `requirements-web.txt`, gunicorn `web_app:app` on
+   127.0.0.1:8050, nginx :80). Verify: `curl -sf http://127.0.0.1:8050/`.
+3. **HTTPS (after DNS resolves to the VPS):**
+   `DOMAIN=moonbite.org bash deploy/setup-https.sh` — issues a cert for both
+   `moonbite.org` and `www.moonbite.org` and forces the HTTPS redirect.
+4. **Verify live:** `https://moonbite.org/` shows the cinematic home;
+   `/mine` offers the Reactor download; `/downloads/...zip` serves the real file.

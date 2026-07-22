@@ -21,7 +21,11 @@ chown -R "$APP_USER":"$APP_USER" "$APP_DIR"
 echo "=== 3/7  Python venv + dependencies ==="
 python3 -m venv "$APP_DIR/venv"
 "$APP_DIR/venv/bin/pip" install --quiet --upgrade pip
-"$APP_DIR/venv/bin/pip" install --quiet flask gunicorn ecdsa
+if [ -f "$APP_DIR/requirements-web.txt" ]; then
+    "$APP_DIR/venv/bin/pip" install --quiet -r "$APP_DIR/requirements-web.txt"
+else
+    "$APP_DIR/venv/bin/pip" install --quiet flask gunicorn ecdsa
+fi
 
 echo "=== 4/7  Systemd service ==="
 cat > /etc/systemd/system/moonbite-dashboard.service <<UNIT
